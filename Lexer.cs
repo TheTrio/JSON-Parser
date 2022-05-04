@@ -89,6 +89,19 @@ namespace JSONParser
           }
           _tokens.Add(new Token(TokenType.NUMBER, _text.Substring(start, _index - start)));
         }
+        else if (ch == '"')
+        {
+          _tokens.Add(new Token(TokenType.QUOTE, "\""));
+          next();
+          int start = _index;
+          while (Current != '"' && Current != '\0')
+          {
+            next();
+          }
+          _tokens.Add(new Token(TokenType.STRING, _text.Substring(start, _index - start)));
+          _tokens.Add(new Token(TokenType.QUOTE, "\""));
+          next();
+        }
         else
         {
 
@@ -100,7 +113,6 @@ namespace JSONParser
             '}' => new Token(TokenType.CLOSING_CURLY_BRACE, "}"),
             '[' => new Token(TokenType.OPENING_BRACKET, "["),
             ']' => new Token(TokenType.CLOSING_BRACKET, "]"),
-            '"' => new Token(TokenType.QUOTE, "\""),
             _ => new Token(TokenType.INVALID, ch.ToString())
           };
           if (token.Type == TokenType.INVALID)

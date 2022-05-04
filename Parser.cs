@@ -90,7 +90,7 @@ namespace JSONParser
     private string parse_string()
     {
       match(TokenType.QUOTE);
-      var stringToken = match(TokenType.STRING, TokenType.NUMBER);
+      var stringToken = match(TokenType.STRING);
       match(TokenType.QUOTE);
       return stringToken.Value;
     }
@@ -155,7 +155,7 @@ namespace JSONParser
         {
           // Console.Write($"{padding}{pair.Key} -> ");
           Console.ForegroundColor = ConsoleColor.Magenta;
-          Console.Write($"{padding}{pair.Key}");
+          Console.Write($"{padding}\"{pair.Key}\"");
           Console.ResetColor();
           Console.Write(" -> ");
           PrettyPrint(pair.Value, indent + 1);
