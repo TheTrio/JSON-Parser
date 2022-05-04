@@ -8,7 +8,12 @@ namespace JSONParser
 
     public static void Main(string[] args)
     {
-      var lexer = new Lexer("test.json");
+      if (args.Length <= 0)
+      {
+        Console.WriteLine("Missing JSON file");
+        return;
+      }
+      var lexer = new Lexer(args[0]);
       var parser = new Parser(lexer);
       try
       {
