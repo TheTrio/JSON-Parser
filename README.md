@@ -18,6 +18,7 @@ dotnet run
 
 # TODO
 
-- [ ] Implement a CLI, which supports passing the json to the standard input. It should also read from the file if specified.
+- [ ] Implement a CLI, which supports reading the json both from the standard input and a file.
 - [ ] Add colors to the output
 - [ ] Better error messages
+- [ ] Add support for comments
