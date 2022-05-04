@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace JSONParser
 {
@@ -54,7 +53,7 @@ namespace JSONParser
     {
       var dict = new Dictionary<string, dynamic>();
       match(TokenType.OPENING_CURLY_BRACE);
-      while (Current.Type != TokenType.CLOSING_CURLY_BRACE)
+      while (Current.Type != TokenType.CLOSING_CURLY_BRACE && Current.Type != TokenType.EOF)
       {
         var string_val = parse_string();
         match(TokenType.COLON);

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace JSONParser
 {
@@ -48,6 +47,15 @@ namespace JSONParser
 
     public List<Token> Tokens => _tokens;
     private char Current => current();
+
+    public char peek(int offset = 1)
+    {
+      if (_index + offset >= _text.Length)
+      {
+        return '\0';
+      }
+      return _text[_index + offset];
+    }
     public Lexer(string fileName)
     {
       _fileName = fileName;
@@ -61,13 +69,29 @@ namespace JSONParser
     {
       while (true)
       {
-        char ch = current();
+        char ch = Current;
         if (ch == '\0')
         {
           _tokens.Add(new Token(TokenType.EOF, "\0"));
           break;
         }
-        if (Char.IsWhiteSpace(ch))
+        else if (ch == '/' && peek() == '/')
+        {
+          while (Current != '\n' && Current != '\0')
+            next();
+        }
+        else if (ch == '/' && peek() == '*')
+        {
+          next();
+          next();
+          while (Current != '*' && peek() != '/' && Current != '\0')
+          {
+            next();
+          }
+          next();
+          next();
+        }
+        else if (Char.IsWhiteSpace(ch))
         {
           next();
         }
