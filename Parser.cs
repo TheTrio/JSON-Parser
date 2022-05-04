@@ -111,33 +111,60 @@ namespace JSONParser
           throw new Exception("Expected list, object, integer or string after \":\" Found nothing");
       };
     }
-    public static string PrettyPrint(dynamic arg, int indent = 1)
+    public static void PrettyPrint(dynamic arg, int indent = 1)
     {
       if (arg is int)
       {
-        return $"{arg}";
+        Console.ForegroundColor = ConsoleColor.Cyan;
+        Console.Write(arg);
+        Console.ResetColor();
+        return;
       }
       if (arg is string)
       {
-        return arg;
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.Write($"\"{arg}\"");
+        Console.ResetColor();
+        return;
       }
       var padding = new string(' ', indent * 2);
       if (arg is List<dynamic> list)
       {
-        return $"[{string.Join(", ", list.Select(item => PrettyPrint(item)))}]";
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write("[");
+        Console.ResetColor();
+        // Console.Write($"[{string.Join(", ", list.Select(item => PrettyPrint(item)))}]");
+        for (int i = 0; i < list.Count; i++)
+        {
+          PrettyPrint(list[i]);
+          if (i != list.Count - 1)
+            Console.Write(", ");
+        }
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write("]");
+        Console.ResetColor();
       }
-      string output = $"{{\n";
       if (arg is Dictionary<string, dynamic> dict)
       {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write($"{{\n");
+        Console.ResetColor();
         foreach (var pair in dict)
         {
-          output += $"{padding}{pair.Key} -> {PrettyPrint(pair.Value, indent + 1)}\n";
+          // Console.Write($"{padding}{pair.Key} -> ");
+          Console.ForegroundColor = ConsoleColor.Magenta;
+          Console.Write($"{padding}{pair.Key}");
+          Console.ResetColor();
+          Console.Write(" -> ");
+          PrettyPrint(pair.Value, indent + 1);
+          Console.Write("\n");
         }
         padding = new string(' ', (indent - 1) * 2);
-        output += $"{padding}}}";
-        return output;
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write($"{padding}}}");
+        Console.ResetColor();
       }
-      return "";
+      Console.Write("");
     }
   }
 }

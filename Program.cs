@@ -13,7 +13,8 @@ namespace JSONParser
       try
       {
         var output = parser.ParseJson();
-        Console.WriteLine(Parser.PrettyPrint(output));
+        Parser.PrettyPrint(output);
+        Console.Write("\n");
       }
       catch (Exception err)
       {
