@@ -8,17 +8,29 @@ A toy library to parse JSON into C# objects([Dictionary](https://docs.microsoft.
 
 Do note that this project doesn't aim to implement the entire JSON Specification(which can be found [here](https://www.ietf.org/rfc/rfc4627.txt)), although it does conform to most of it. 
 
+# Examples
+
+## A Basic One
+
+![image](https://user-images.githubusercontent.com/10794178/166743715-e7d3b890-8a04-4d5c-9230-53b340f553aa.png)
+
+## One with more nesting
+
+![image](https://user-images.githubusercontent.com/10794178/166744191-393afa36-aa86-49dc-a292-e1cea0f087d8.png)
+
+## One without a closing bracket
+
+![image](https://user-images.githubusercontent.com/10794178/166744310-bd882527-8113-4254-8c3f-bdac9759b8dc.png)
+
+## One with a missing quote
+
+![image](https://user-images.githubusercontent.com/10794178/166744447-4b8b5b37-34db-47cc-9db1-1427973c5141.png)
+
+
 # Run
 
-You can use the dotnet CLI to run the program. The program expects the json to be in `test.json`, which must be in the directory from where you run the program. 
+You can use the dotnet CLI to run the program. You need to pass the path of the file as an argument. 
 
 ```
-dotnet run
+dotnet run -- test.json
 ```
-
-# TODO
-
-- [ ] Implement a CLI, which supports reading the json both from the standard input and a file.
-- [ ] Add colors to the output
-- [ ] Better error messages
-- [ ] Add support for comments
