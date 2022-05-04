@@ -6,31 +6,34 @@ namespace JSONParser
 {
   public class Parser
   {
-    private List<Token> tokens;
+    private List<Token> _tokens;
     private int index;
 
-    public List<Token> Tokens { get => tokens; set => tokens = value; }
-    public Parser(List<Token> t)
+    public List<Token> Tokens { get => _tokens; set => _tokens = value; }
+    private List<string> _errors;
+    public List<string> Errors => _errors;
+    public Parser(Lexer lexer)
     {
-      tokens = t;
+      _tokens = lexer.Tokens;
+      _errors = lexer.Errors;
       index = 0;
     }
     private Token next()
     {
-      if (index >= tokens.Count)
+      if (index >= _tokens.Count)
       {
-        return new Token(TokenType.EOF);
+        return new Token(TokenType.EOF, "\0");
       }
-      return tokens[index++];
+      return _tokens[index++];
     }
 
     private Token peek(int a = 1)
     {
-      if (index + a >= tokens.Count)
+      if (index + a >= _tokens.Count)
       {
-        return new Token(TokenType.EOF);
+        return new Token(TokenType.EOF, "\0");
       }
-      return tokens[index + a];
+      return _tokens[index + a];
     }
 
     private Token Current => peek(0);
@@ -39,7 +42,7 @@ namespace JSONParser
     {
       if (Current.Type != type)
       {
-        throw new Exception($"Expected {type}, found {Current.Type}");
+        throw new Exception($"Unexpected Token {Current.Type} '{Current.Value}'. Expected {type}");
       }
       return next();
     }
@@ -50,9 +53,9 @@ namespace JSONParser
       match(TokenType.OPENING_CURLY_BRACE);
       while (Current.Type != TokenType.CLOSING_CURLY_BRACE)
       {
-        var stringToken = match(TokenType.STRING);
+        var string_val = parse_string();
         match(TokenType.COLON);
-        dict.Add(stringToken.Value, ParseJson());
+        dict.Add(string_val, ParseJson());
         if (Current.Type == TokenType.COMMA)
         {
           next();
@@ -81,20 +84,31 @@ namespace JSONParser
       match(TokenType.CLOSING_BRACKET);
       return list;
     }
+    private string parse_string()
+    {
+      match(TokenType.QUOTE);
+      var stringToken = match(TokenType.STRING);
+      match(TokenType.QUOTE);
+      return stringToken.Value;
+    }
     public dynamic ParseJson()
     {
+      if (_errors.Count > 0)
+      {
+        throw new Exception("Invalid JSON");
+      }
       switch (Current.Type)
       {
         case TokenType.OPENING_CURLY_BRACE:
           return parse_object();
         case TokenType.NUMBER:
           return int.Parse(next().Value);
-        case TokenType.STRING:
-          return next().Value;
+        case TokenType.QUOTE:
+          return parse_string();
         case TokenType.OPENING_BRACKET:
           return parse_list();
         default:
-          throw new Exception("Expected value, found nothing");
+          throw new Exception("Expected list, object, integer or string after \":\" Found nothing");
       };
     }
     public static string PrettyPrint(dynamic arg, int indent = 1)
