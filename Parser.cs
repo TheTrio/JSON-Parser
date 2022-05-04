@@ -38,13 +38,16 @@ namespace JSONParser
 
     private Token Current => peek(0);
 
-    private Token match(TokenType type)
+    private Token match(params TokenType[] types)
     {
-      if (Current.Type != type)
+      foreach (TokenType type in types)
       {
-        throw new Exception($"Unexpected Token {Current.Type} '{Current.Value}'. Expected {type}");
+        if (Current.Type == type)
+        {
+          return next();
+        }
       }
-      return next();
+      throw new Exception($"Unexpected Token {Current.Type} '{Current.Value}'. Expected {types[0]}");
     }
 
     private Dictionary<string, dynamic> parse_object()
@@ -87,7 +90,7 @@ namespace JSONParser
     private string parse_string()
     {
       match(TokenType.QUOTE);
-      var stringToken = match(TokenType.STRING);
+      var stringToken = match(TokenType.STRING, TokenType.NUMBER);
       match(TokenType.QUOTE);
       return stringToken.Value;
     }
@@ -133,7 +136,6 @@ namespace JSONParser
         Console.ForegroundColor = ConsoleColor.Green;
         Console.Write("[");
         Console.ResetColor();
-        // Console.Write($"[{string.Join(", ", list.Select(item => PrettyPrint(item)))}]");
         for (int i = 0; i < list.Count; i++)
         {
           PrettyPrint(list[i]);
