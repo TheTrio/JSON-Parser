@@ -26,6 +26,14 @@ Do note that this project doesn't aim to implement the entire JSON Specification
 
 ![image](https://user-images.githubusercontent.com/10794178/166744447-4b8b5b37-34db-47cc-9db1-1427973c5141.png)
 
+## One with single line comments
+
+![image](https://user-images.githubusercontent.com/10794178/166823243-abb1d5ba-fb76-4f7f-8ba5-556d7b640b2d.png)
+
+## One with multi line comments
+
+![image](https://user-images.githubusercontent.com/10794178/166823416-ea57ef15-ed21-499a-9da5-358efe3ee936.png)
+
 
 # Run
 
