@@ -1,0 +1,7 @@
+{
+  "list": [1, 2, 3, 4],
+  "object": {
+    "great": "yes",
+    "nesting": 2
+  }
+}
