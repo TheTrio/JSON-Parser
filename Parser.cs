@@ -57,7 +57,7 @@ namespace JSONParser
       {
         var string_val = parse_string();
         match(TokenType.COLON);
-        dict.Add(string_val, ParseJson());
+        dict.Add(string_val, parse());
         if (Current.Type == TokenType.COMMA)
         {
           next();
@@ -73,7 +73,7 @@ namespace JSONParser
       match(TokenType.OPENING_BRACKET);
       while (Current.Type != TokenType.CLOSING_BRACKET)
       {
-        list.Add(ParseJson());
+        list.Add(parse());
         if (Current.Type == TokenType.COMMA)
         {
           next();
@@ -93,7 +93,7 @@ namespace JSONParser
       match(TokenType.QUOTE);
       return stringToken.Value;
     }
-    public dynamic ParseJson()
+    private dynamic parse()
     {
       if (_errors.Count > 0)
       {
@@ -104,7 +104,7 @@ namespace JSONParser
         case TokenType.OPENING_CURLY_BRACE:
           return parse_object();
         case TokenType.NUMBER:
-          return int.Parse(next().Value);
+          return float.Parse(next().Value);
         case TokenType.QUOTE:
           return parse_string();
         case TokenType.OPENING_BRACKET:
@@ -113,9 +113,27 @@ namespace JSONParser
           throw new Exception("Expected list, object, integer or string after \":\" Found nothing");
       };
     }
+
+    public dynamic ParseJson()
+    {
+      if (_errors.Count > 0)
+      {
+        throw new Exception("Invalid JSON");
+      }
+      switch (Current.Type)
+      {
+        case TokenType.OPENING_CURLY_BRACE:
+          return parse_object();
+        case TokenType.OPENING_BRACKET:
+          return parse_list();
+        default:
+          throw new Exception("Expected list or object");
+      };
+
+    }
     public static void PrettyPrint(dynamic arg, int indent = 1)
     {
-      if (arg is int)
+      if (arg is float)
       {
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.Write(arg);
@@ -124,8 +142,12 @@ namespace JSONParser
       }
       if (arg is string)
       {
+        Console.ForegroundColor = ConsoleColor.Black;
+        Console.Write($"\"");
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.Write($"\"{arg}\"");
+        Console.Write(arg);
+        Console.ForegroundColor = ConsoleColor.Black;
+        Console.Write($"\"");
         Console.ResetColor();
         return;
       }
@@ -152,9 +174,12 @@ namespace JSONParser
         Console.ResetColor();
         foreach (var pair in dict)
         {
-          // Console.Write($"{padding}{pair.Key} -> ");
+          Console.ForegroundColor = ConsoleColor.Black;
+          Console.Write($"{padding}\"");
           Console.ForegroundColor = ConsoleColor.Magenta;
-          Console.Write($"{padding}\"{pair.Key}\"");
+          Console.Write(pair.Key);
+          Console.ForegroundColor = ConsoleColor.Black;
+          Console.Write("\"");
           Console.ResetColor();
           Console.Write(" -> ");
           PrettyPrint(pair.Value, indent + 1);

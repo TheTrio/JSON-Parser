@@ -104,25 +104,83 @@ namespace JSONParser
           }
           _tokens.Add(new Token(TokenType.STRING, _text.Substring(start, _index - start)));
         }
-        else if (Char.IsDigit(ch))
+        else if (Char.IsDigit(ch) || ch == '-')
         {
           int start = _index;
+          if (ch == '-')
+          {
+            next();
+          }
           while (Char.IsDigit(Current))
           {
             next();
           }
+          if (Current == '.')
+          {
+            next();
+            while (Char.IsDigit(Current))
+            {
+              next();
+            }
+          }
+          else
+          {
+            string number = _text.Substring(start, _index - start);
+            if (number.Length > 1 && number.StartsWith('0') || number.StartsWith("-0"))
+            {
+              _errors.Add($"{number} - Leading zeros are not allowed");
+            }
+          }
+
           _tokens.Add(new Token(TokenType.NUMBER, _text.Substring(start, _index - start)));
         }
         else if (ch == '"')
         {
           _tokens.Add(new Token(TokenType.QUOTE, "\""));
+          string value = "";
           next();
           int start = _index;
           while (Current != '"' && Current != '\0')
           {
+            if (Current == '\\')
+            {
+              next();
+              switch (Current)
+              {
+                case 'n':
+                  value += '\n';
+                  break;
+                case 't':
+                  value += '\t';
+                  break;
+                case 'r':
+                  value += '\r';
+                  break;
+                case 'b':
+                  value += '\b';
+                  break;
+                case 'f':
+                  value += '\f';
+                  break;
+                case '\\':
+                  value += '\\';
+                  break;
+                case '"':
+                  value += '"';
+                  break;
+                default:
+                  _errors.Add($"Invalid escape sequence \\{Current}");
+                  break;
+              }
+            }
+            else
+            {
+              value += Current;
+            }
             next();
+
           }
-          _tokens.Add(new Token(TokenType.STRING, _text.Substring(start, _index - start)));
+          _tokens.Add(new Token(TokenType.STRING, value));
           _tokens.Add(new Token(TokenType.QUOTE, "\""));
           next();
         }
