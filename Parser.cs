@@ -77,6 +77,10 @@ namespace JSONParser
         if (Current.Type == TokenType.COMMA)
         {
           next();
+          if (Current.Type == TokenType.CLOSING_BRACKET)
+          {
+            throw new Exception("Unexpected comma at end of list");
+          }
         }
         else
         {
@@ -110,7 +114,7 @@ namespace JSONParser
         case TokenType.OPENING_BRACKET:
           return parse_list();
         default:
-          throw new Exception("Expected list, object, integer or string after \":\" Found nothing");
+          throw new Exception($"Expected list, object, integer or string after \":\", got \"{Current.Value}\"");
       };
     }
 
@@ -120,12 +124,17 @@ namespace JSONParser
       {
         throw new Exception("Invalid JSON");
       }
+      dynamic result;
       switch (Current.Type)
       {
         case TokenType.OPENING_CURLY_BRACE:
-          return parse_object();
+          result = parse_object();
+          match(TokenType.EOF);
+          return result;
         case TokenType.OPENING_BRACKET:
-          return parse_list();
+          result = parse_list();
+          match(TokenType.EOF);
+          return result;
         default:
           throw new Exception("Expected list or object");
       };

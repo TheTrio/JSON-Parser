@@ -36,6 +36,7 @@ namespace JSONParser
       return $"{_tokenType} {_value}";
     }
   }
+
   public class Lexer
   {
     private string _fileName;
@@ -47,6 +48,8 @@ namespace JSONParser
 
     public List<Token> Tokens => _tokens;
     private char Current => current();
+    private static readonly List<char> ESCAPE_SEQUENCE = new List<char> { '\n', '\t', '\r', '\b', '\f' };
+
 
     public char peek(int offset = 1)
     {
@@ -142,6 +145,11 @@ namespace JSONParser
           int start = _index;
           while (Current != '"' && Current != '\0')
           {
+            if (ESCAPE_SEQUENCE.Contains(Current))
+            {
+              _errors.Add($"Unescaped characters in string");
+              return;
+            }
             if (Current == '\\')
             {
               next();
