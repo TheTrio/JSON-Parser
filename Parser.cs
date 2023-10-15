@@ -113,6 +113,15 @@ namespace JSONParser
           return parse_string();
         case TokenType.OPENING_BRACKET:
           return parse_list();
+        case TokenType.TRUE:
+          next();
+          return true;
+        case TokenType.FALSE:
+          next();
+          return false;
+        case TokenType.NULL:
+          next();
+          return null!;
         default:
           throw new Exception($"Expected list, object, integer or string after \":\", got \"{Current.Value}\"");
       };
@@ -157,6 +166,20 @@ namespace JSONParser
         Console.Write(arg);
         Console.ForegroundColor = ConsoleColor.Black;
         Console.Write($"\"");
+        Console.ResetColor();
+        return;
+      }
+      if (arg is bool)
+      {
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(arg ? "true" : "false");
+        Console.ResetColor();
+        return;
+      }
+      if (arg is null)
+      {
+        Console.ForegroundColor = ConsoleColor.DarkGray;
+        Console.Write("null");
         Console.ResetColor();
         return;
       }

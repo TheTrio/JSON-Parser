@@ -17,6 +17,9 @@ namespace JSONParser
     STRING,
     NUMBER,
     INVALID,
+    TRUE,
+    FALSE,
+    NULL,
     EOF
   }
 
@@ -105,7 +108,24 @@ namespace JSONParser
           {
             next();
           }
-          _tokens.Add(new Token(TokenType.STRING, _text.Substring(start, _index - start)));
+          string word = _text.Substring(start, _index - start);
+          if (word == "true")
+          {
+            _tokens.Add(new Token(TokenType.TRUE, word));
+          }
+          else if (word == "false")
+          {
+            _tokens.Add(new Token(TokenType.FALSE, word));
+          }
+          else if (word == "null")
+          {
+            _tokens.Add(new Token(TokenType.NULL, word));
+          }
+          else
+          {
+            _tokens.Add(new Token(TokenType.INVALID, word));
+            _errors.Add($"Unexpected keyword {word}");
+          }
         }
         else if (Char.IsDigit(ch) || ch == '-')
         {
